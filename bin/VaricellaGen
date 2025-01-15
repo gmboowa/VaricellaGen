@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# create the required directories
+mkdir -p $output/results
+mkdir -p $output/results/{qc,alignment,variants,consensus,clade,assembly}
+
