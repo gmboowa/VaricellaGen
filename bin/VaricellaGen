@@ -26,6 +26,3 @@ run_fastqc_p() {
 	echo "Quality assessment complete. Results are saved in the '$output_dir' directory."
 }
 
-# Usage example:
-# run_fastqc your_directory_or_file
-
