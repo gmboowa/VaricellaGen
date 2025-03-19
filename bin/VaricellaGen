@@ -93,7 +93,7 @@ fi
 exist_p() {
 	if [ -e "$forward_read" ] && [ -s "$forward_read" ] && [ -e "$reverse_read" ] && [ -s "$reverse_read" ]
 	then
-    		echo -e "Both reads exist and are not empty.\n We shall proceed to the down stream analysis"
+    		echo -e "Both reads exist and are not empty.\n We shall proceed to the downstream analysis"
 	else
     		echo "One or more reads do not exist or are empty."
 	fi
