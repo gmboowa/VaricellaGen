@@ -101,15 +101,16 @@ exist_p() {
 
 ## Test the exist_p function
 #exist_p  ## the function works well
-# Function to perform quality assessment on paired-end files
-#run_fastqc_p() {
-	# Output directory for FastQC results
-#    	output_dir="$output/results/qc"
-#	mkdir -p $output_dir/{before,after}
-#	fastqc $forward_read $reverse_read -o $output_dir/before/
-#	multiqc $output_dir/before/* -o $output_dir/before/
-#	trim_galore -q 28 --fastqc --paired $forward $reverse
-#	mv ${i}*fastqc.zip $output_dir/after/
-#	echo "Quality assessment complete. Results are saved in the '$output_dir' directory."
-#}
 
+
+# Function to perform quality assessment on paired-end files
+run_fastqc_p() {
+	# Output directory for FastQC results
+    	output="$output_dir/results/qc"
+	mkdir -p $output/trimmed_fastqs
+	fastqc $forward_read $reverse_read -o $output/
+	trim_galore -q 28 --fastqc --paired $forward_read $reverse_read --output_dir $output/trimmed_fastqs
+	echo "Quality assessment complete. Results are saved in the '$output' directory."
+}
+
+#run_fastqc_p  ## the function works well
