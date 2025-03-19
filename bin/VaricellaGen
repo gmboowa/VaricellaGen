@@ -100,7 +100,7 @@ exist_p() {
 }
 
 ## Test the exist_p function
-#exist_p  ## the function works well
+exist_p  ## the function works well
 
 
 # Function to perform quality assessment on paired-end files
@@ -113,4 +113,21 @@ run_fastqc_p() {
 	echo "Quality assessment complete. Results are saved in the '$output' directory."
 }
 
-#run_fastqc_p  ## the function works well
+run_fastqc_p  ## the function works well
+
+
+# Function to perform alignment
+run_alignment_p() {
+	R1="*_val_1.fq.gz"
+	R2="*_val_2.fq.gz"
+	output="$output_dir/results/alignment"
+	mkdir -p $output
+	id=$(echo $forward_read | awk -F"/" '{print $NF}' | cut -f1 -d"_")
+	bwa mem -t $cores ${HOME}/VaricellaGen/references/zoster.fasta $output_dir/results/qc/trimmed_fastqs/$R1 $output_dir/results/qc/trimmed_fastqs/$R2 | \
+	samtools sort -o $output_dir/results/alignment/${id}.zoster.sorted.bam
+	samtools view -F4 $output_dir/results/alignment/${id}.zoster.sorted.bam -o $output_dir/results/alignment/${id}.zoster.sorted.mapped.bam
+        samtools sort -o $output_dir/results/alignment/${id}.zoster.sorted.mapped.sorted.bam $output_dir/results/alignment/${id}.zoster.sorted.mapped.bam
+	samtools index $output_dir/results/alignment/${id}.zoster.sorted.mapped.sorted.bam
+}
+
+run_alignment_p
