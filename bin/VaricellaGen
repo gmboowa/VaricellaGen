@@ -95,10 +95,12 @@ exist_p() {
 	then
     		echo -e "Both reads exist and are not empty.\n We shall proceed to the down stream analysis"
 	else
-    		echo "One or reads do not exist or are empty."
+    		echo "One or more reads do not exist or are empty."
 	fi
 }
 
+## Test the exist_p function
+#exist_p  ## the function works well
 # Function to perform quality assessment on paired-end files
 #run_fastqc_p() {
 	# Output directory for FastQC results
