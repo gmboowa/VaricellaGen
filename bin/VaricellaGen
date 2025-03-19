@@ -1,8 +1,93 @@
 #!/usr/bin/env bash
 
+#. "$CONDA_PREFIX/etc/profile.d/conda.sh" # enable activation of the conda environment within script
+
+#conda activate base
+
+### Required arguments
+output_dir="" # outout directory
+forward_read="" # forward read
+reverse_read="" # reverse read
+consensus="" # consensus file
+varcall=false # variant call option: this performs only variant calling
+all=false # This runs the whole pipeline
+phylogeny=false # resistance profiling
+cores=16 # get number of cpus to use
+version="1.0"
+
+#if [ $# == 0 ]
+#then
+#    usage
+#    exit 1
+#fi
+
+while [[ $# -gt 0 ]]
+do
+        case "$1" in
+                --output-dir|-o)
+                        output_dir="$2"
+                        shift 2
+                        ;;
+                --forward-read|-f)
+                        forward_read="$2"
+                        shift 2
+                        ;;
+                --reverse-read|-r)
+                        reverse_read="$2"
+                        shift 2
+                        ;;
+		--consensus)
+			consensus="$2"
+			shift 2
+			;;
+		--varcall)
+			varcall=true
+			shift 2
+			;;
+		--all)
+			all=true
+			shift 2
+			;;
+		--phylogeny)
+			resistance=true
+			shift 2
+			;;
+		--cores)
+			cores="$2"
+			shift 2
+			;;
+#    		-h|--help)
+#        		usage
+#        		exit 1
+#        		;;
+    		-v|--version)
+        		echo "This is VaricellaGen version $version"
+        		exit 1
+        		;;
+#    		-x|--citation)
+#        		echo -e "\nIf using HIV-DRIVES, please cite:"
+#			echo -e "HIV-DRIVES: HIV Drug Resistance Identification, Variant Evaluation, and Surveillance\nsierra-local: A lightweight standalone application for drug resistance prediction. Jasper C Ho, Garway T Ng, Mathias Renaud, Art FY Poon, (2019). Journal of Open Source Software, 4(33), 1186, https://doi.org/10.21105/joss.01186\nhttps://github.com/phac-nml/quasitools"
+#        		exit 1
+#        		;;
+                *)
+                        echo "Invalid option: $1" >&2
+			echo "Wrong Usage"
+                        exit 1
+                        ;;
+	esac
+done
+
+# Validate required options
+if [[ -z $output_dir ]]
+then
+        echo "Missing output directory" >&2
+        usage
+        exit 1
+fi
+
 # create the required directories
-mkdir -p $output/results
-mkdir -p $output/results/{qc,alignment,variants,consensus,clade,assembly}
+#mkdir -p $output_dir/results
+#mkdir -p $output_dir/results/{qc,alignment,variants,consensus,clade,assembly}
 
 # Check if the files exist
 exist_p() {
@@ -15,14 +100,14 @@ exist_p() {
 }
 
 # Function to perform quality assessment on paired-end files
-run_fastqc_p() {
+#run_fastqc_p() {
 	# Output directory for FastQC results
-    	output_dir="$output/results/qc"
-	mkdir -p $output_dir/{before,after}
-	fastqc $forward_read $reverse_read -o $output_dir/before/
-	multiqc $output_dir/before/* -o $output_dir/before/
-	trim_galore -q 28 --fastqc --paired $forward $reverse
+#    	output_dir="$output/results/qc"
+#	mkdir -p $output_dir/{before,after}
+#	fastqc $forward_read $reverse_read -o $output_dir/before/
+#	multiqc $output_dir/before/* -o $output_dir/before/
+#	trim_galore -q 28 --fastqc --paired $forward $reverse
 #	mv ${i}*fastqc.zip $output_dir/after/
-	echo "Quality assessment complete. Results are saved in the '$output_dir' directory."
-}
+#	echo "Quality assessment complete. Results are saved in the '$output_dir' directory."
+#}
 
