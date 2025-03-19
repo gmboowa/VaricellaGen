@@ -81,7 +81,7 @@ done
 if [[ -z $output_dir ]]
 then
         echo "Missing output directory" >&2
-        usage
+        echo "add output directory"
         exit 1
 fi
 
