@@ -49,7 +49,7 @@ do
 			shift 2
 			;;
 		--phylogeny)
-			resistance=true
+			phylogeny=true
 			shift 2
 			;;
 		--cores)
