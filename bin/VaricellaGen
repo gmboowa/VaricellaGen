@@ -10,16 +10,58 @@ forward_read="" # forward read
 reverse_read="" # reverse read
 consensus="" # consensus file
 varcall=false # variant call option: this performs only variant calling
-all=false # This runs the whole pipeline
+typing=false # This runs the whole pipeline
 phylogeny=false # resistance profiling
 cores=16 # get number of cpus to use
 version="1.0"
 
-#if [ $# == 0 ]
-#then
-#    usage
-#    exit 1
-#fi
+usage() {
+    echo -e ${Cyan}
+    cat <<EOF
+This is VaricellaGen $version
+Developed and maintained by Stephen Kanyerezi, Ivan Sserwadda, Jupiter Marina Kabahita, & Gerald Mboowa
+
+Synopsis:
+	VaricellaGen is a modular and automated pipeline designed to simplify and standardize the genomic analysis of Varicella-zoster virus (VZV). It integrates quality control, variant calling, consensus genome generation, clade typing, and phylogenetic analysis into a streamlined workflow.
+
+Usage: 
+	Given paired reads, to run perform variant calling, clade typing and consensus genome generation; VaricellaGen [options] -f <path of forward read> -r <path of reverse read> -o <output directory to be created> --typing true
+	Given paired reads, to perform variant calling and generate a consensus genome without clade typing; VaricellaGen [options] -f <path of forward read> -r <path of reverse read> -o <output directory to be created> --varcall true
+	Given a multifasta file, to perform phylogeny; VaricellaGen [options] --consensus <path of multifasta file> --phylogeny true -o <output directory to be created> 
+
+General:
+	-h/--help       Show this help menu
+	-v/--version    Print version and exit
+	-x/--citation   Show citation and exit
+
+Mandatory options for paired reads:
+	-f/--forward-read	Path of the forward reads [either .fastq or .fastq.gz]
+
+	-r/--reverse-read	Path of the reverse reads [either .fastq or .fastq.gz]
+
+	--consensus		Path of mulitfasta file. Applicable if you want to perform phylogenetics
+
+	-o/--output-dir	        Directory to be created for results
+
+	--typing	         [true or false (default)] Run the pipeline to generate variants, clade typing, and consensus genome.
+
+	--varcall	        [true or false (default)] Genrate variants and consensus genome only.
+
+	--phylogeny		[true or false (default)] construct a phylogenetic tree. Applicable only with --consensus option and if --varcall and --typing not set to true
+
+Other options:
+
+	--cores			Number of cpus to use. Default=16
+                     
+For further explanation please visit: https://github.com/MicroBioGenoHub/VaricellaGen
+EOF
+#    echo -e ${Off}
+}
+
+if [ $# == 0 ]; then
+    usage
+    exit 1
+fi
 
 while [[ $# -gt 0 ]]
 do
@@ -44,8 +86,8 @@ do
 			varcall=true
 			shift 2
 			;;
-		--all)
-			all=true
+		--typing)
+			typing=true
 			shift 2
 			;;
 		--phylogeny)
@@ -56,22 +98,22 @@ do
 			cores="$2"
 			shift 2
 			;;
-#    		-h|--help)
-#        		usage
-#        		exit 1
-#        		;;
+    		-h|--help)
+        		usage
+        		exit 1
+        		;;
     		-v|--version)
         		echo "This is VaricellaGen version $version"
         		exit 1
         		;;
-#    		-x|--citation)
-#        		echo -e "\nIf using HIV-DRIVES, please cite:"
-#			echo -e "HIV-DRIVES: HIV Drug Resistance Identification, Variant Evaluation, and Surveillance\nsierra-local: A lightweight standalone application for drug resistance prediction. Jasper C Ho, Garway T Ng, Mathias Renaud, Art FY Poon, (2019). Journal of Open Source Software, 4(33), 1186, https://doi.org/10.21105/joss.01186\nhttps://github.com/phac-nml/quasitools"
-#        		exit 1
-#        		;;
+    		-x|--citation)
+        		echo -e "\nIf using VaricellaGen, please cite:"
+			echo -e "VaricellaGen is a modular and automated pipeline designed to simplify and standardize the genomic analysis of Varicella-zoster virus (VZV). It integrates quality control, variant calling, consensus genome generation, clade typing, and phylogenetic analysis into a streamlined workflow."
+        		exit 1
+        		;;
                 *)
                         echo "Invalid option: $1" >&2
-			echo "Wrong Usage"
+			usage
                         exit 1
                         ;;
 	esac
@@ -81,7 +123,7 @@ done
 if [[ -z $output_dir ]]
 then
         echo "Missing output directory" >&2
-        echo "add output directory"
+        usage
         exit 1
 fi
 
@@ -100,7 +142,7 @@ exist_p() {
 }
 
 ## Test the exist_p function
-exist_p  ## the function works well
+#exist_p  ## the function works well
 
 
 # Function to perform quality assessment on paired-end files
@@ -114,7 +156,7 @@ run_fastqc_p() {
 	echo "Quality assessment complete. Results are saved in the '$output' directory."
 }
 
-run_fastqc_p  ## the function works well
+#run_fastqc_p  ## the function works well
 
 
 # Function to perform alignment
@@ -132,7 +174,7 @@ run_alignment_p() {
 	samtools index $output_dir/results/alignment/${id}.zoster.sorted.mapped.sorted.bam
 }
 
-run_alignment_p ## the function works well
+#run_alignment_p ## the function works well
 
 # Function to perform variant calling
 run_var_p() {
@@ -168,7 +210,7 @@ run_var_p() {
 	echo "$id,$nucper,$nper" >> $output_dir/results/consensus/metrics.csv
 }
 
-run_var_p
+#run_var_p
 
 # Function to perform clade typing
 run_typing_p() {
@@ -180,7 +222,7 @@ run_typing_p() {
 	echo "$id,$clade" >> $output/clade.csv
 }
 
-run_typing_p
+#run_typing_p
 
 # Function to perform phylogeny
 run_tree_p() {
@@ -191,3 +233,24 @@ run_tree_p() {
 	mafft --thread $cores $input > $output/msa/${id}.aln.fa
 	iqtree2 -s $output/msa/${id}.aln.fa -T $cores -m TEST -czb -B 1000 --quiet
 }
+
+
+### Running the pipeline
+
+if [ "$typing" = true ]
+then
+	exist_p
+	run_fastqc_p	
+	run_alignment_p
+	run_var_p
+	run_typing_p
+elif [ "$varcall" = true ]
+then
+	exist_p
+	run_fastqc_p
+	run_alignment_p
+	run_var_p
+elif [ "$phylogeny" = true ]
+then
+	run_tree_p
+fi
