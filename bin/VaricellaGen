@@ -148,7 +148,7 @@ exist_p() {
 # Function to perform quality assessment on paired-end files
 run_fastqc_p() {
 	# Output directory for FastQC results
-	conda activate sarscov
+#	conda activate sarscov
     	output="$output_dir/results/qc"
 	mkdir -p $output/trimmed_fastqs
 	fastqc $forward_read $reverse_read -o $output/
@@ -161,7 +161,7 @@ run_fastqc_p() {
 
 # Function to perform alignment
 run_alignment_p() {
-	conda activate sarscov
+#	conda activate sarscov
 	R1="*_val_1.fq.gz"
 	R2="*_val_2.fq.gz"
 	output="$output_dir/results/alignment"
@@ -178,16 +178,16 @@ run_alignment_p() {
 
 # Function to perform variant calling
 run_var_p() {
-	conda activate mpxv
+#	conda activate mpxv
 	id=$(echo $forward_read | awk -F"/" '{print $NF}' | cut -f1 -d"_")
 	output="$output_dir/results/variants"
 	mkdir -p $output
 	input="$output_dir/results/alignment/${id}.zoster.sorted.mapped.sorted.bam"
 	freebayes -p 1 -f ${HOME}/VaricellaGen/references/zoster.fasta -F 0.2 -C 1 --pooled-continuous --min-coverage 10 --gvcf --gvcf-dont-use-chunk true $input > $output/${id}_zoster.gvcf
 	vt decompose_blocksub $output/${id}_zoster.gvcf -o $output/${id}_zoster_decompose.vcf
-	conda activate pysam
+#	conda activate pysam
 	process_gvcf.py -d 10 -l 0.25 -u 0.75 -m $output/${id}_zoster.mask.txt -v $output/${id}_zoster.variants.vcf -c $output/${id}_zoster.consensus.vcf $output/${id}_zoster.gvcf
-	conda activate sarscov
+#	conda activate sarscov
 	bcftools norm -D -d all -f ${HOME}/VaricellaGen/references/zoster.fasta $output/${id}_zoster.variants.vcf > $output/${id}_zoster.variants.norm.vcf
 	bcftools norm -D -d all -f ${HOME}/VaricellaGen/references/zoster.fasta $output/${id}_zoster.consensus.vcf > $output/${id}_zoster.consensus.norm.vcf
 	cat $output/${id}_zoster.consensus.norm.vcf | awk -v vartag=ConsensusTag=ambiguous '$0 ~ /^#/ || $0 ~ vartag' > $output/${id}_zoster.ambiguous.norm.vcf
@@ -239,6 +239,7 @@ run_tree_p() {
 
 if [ "$typing" = true ]
 then
+	conda activate VarcellaGen
 	exist_p
 	run_fastqc_p	
 	run_alignment_p
@@ -246,11 +247,13 @@ then
 	run_typing_p
 elif [ "$varcall" = true ]
 then
+	conda activate VarcellaGen
 	exist_p
 	run_fastqc_p
 	run_alignment_p
 	run_var_p
 elif [ "$phylogeny" = true ]
 then
+	conda activate VarcellaGen
 	run_tree_p
 fi
