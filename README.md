@@ -1,6 +1,7 @@
 ## 🎬 VaricellaGen
 A comprehensive pipeline for the genomic analysis of Varicella-zoster virus (VZV), the causative agent of chickenpox.
 
+:wq
 ## 🏆 About
 VaricellaGen is a modular and automated pipeline designed to simplify and standardize the genomic analysis of Varicella-zoster virus (VZV). It integrates quality control, variant calling, consensus genome generation, clade typing, and phylogenetic analysis into a streamlined workflow.
 
@@ -29,8 +30,48 @@ Clone the software from the offical repository using:
 
 `bash setup.sh`
 
-`cd && bash clean.sh` 
+Run the program to make sure you have access to all the plug-ins using the command `VaricellaGen -h` to view output below:
 
-`rm -rf clean.sh`
+```bash
+
+This is VaricellaGen $version
+Developed and maintained by Stephen Kanyerezi, Ivan Sserwadda, Jupiter Marina Kabahita, & Gerald Mboowa
+
+Synopsis:
+        VaricellaGen is a modular and automated pipeline designed to simplify and standardize the genomic analysis of Varicella-zoster virus (VZV). It integrates quality control, variant calling, consensus genome generation, clade typing, and phylogenetic analysis into a streamlined workflow.
+
+Usage: 
+        Given paired reads, to run perform variant calling, clade typing and consensus genome generation; VaricellaGen [options] -f <path of forward read> -r <path of reverse read> -o <output directory to be created> --typing true
+        Given paired reads, to perform variant calling and generate a consensus genome without clade typing; VaricellaGen [options] -f <path of forward read> -r <path of reverse read> -o <output directory to be created> --varcall true
+        Given a multifasta file, to perform phylogeny; VaricellaGen [options] --consensus <path of multifasta file> --phylogeny true -o <output directory to be created> 
+
+General:
+        -h/--help       Show this help menu
+        -v/--version    Print version and exit
+        -x/--citation   Show citation and exit
+
+Mandatory options for paired reads:
+        -f/--forward-read       Path of the forward reads [either .fastq or .fastq.gz]
+
+        -r/--reverse-read       Path of the reverse reads [either .fastq or .fastq.gz]
+
+        --consensus             Path of mulitfasta file. Applicable if you want to perform phylogenetics
+
+        -o/--output-dir         Directory to be created for results
+
+        --typing                 [true or false (default)] Run the pipeline to generate variants, clade typing, and consensus genome.
+
+        --varcall               [true or false (default)] Genrate variants and consensus genome only.
+
+        --phylogeny             [true or false (default)] construct a phylogenetic tree. Applicable only with --consensus option and if --varcall and --typing not set to true
+
+Other options:
+
+        --cores                 Number of cpus to use. Default=16
+                     
+For further explanation please visit: https://github.com/MicroBioGenoHub/VaricellaGen
+
+```
+
 
 
