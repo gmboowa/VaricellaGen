@@ -157,6 +157,15 @@ run_var_p() {
 	bcftools consensus -f ${HOME}/VaricellaGen/references/zoster.fasta -I $output/${id}_zoster.ambiguous.norm.vcf.gz > $output/${id}_zoster.ambiguous.fa
 	CTG_NAME=$(head -n1 ${HOME}/VaricellaGen/references/zoster.fasta | sed 's/>//')
 	bcftools consensus -f $output/${id}_zoster.ambiguous.fa -m $output/${id}_zoster.mask.txt $output/${id}_zoster.fixed.norm.vcf.gz | sed "s/$CTG_NAME/$id/" > $output/${id}_zoster.consensus.fa
+	mkdir -p $output_dir/results/consensus
+	mv $output/*consensus*fa $output_dir/results/consensus
+	#calculate genome coverage and n content
+	ncnt=$(grep -v ">" $output_dir/results/consensus/*fa | grep -o N | wc -l)
+	nuccnt=$(grep -v ">" $output_dir/results/consensus/*fa | grep -o [AGTC] | wc -l)
+	nper=$(echo "scale = 2; $ncnt*100 / 124884" | bc -l)
+	nucper=$(echo "scale = 2; $nuccnt*100 / 124884" | bc -l)
+	echo "id,genome coverage,N content" > $output_dir/results/consensus/metrics.csv
+	echo "$id,$nucper,$nper" >> $output_dir/results/consensus/metrics.csv
 }
 
 run_var_p
@@ -167,7 +176,8 @@ run_typing_p() {
 	output="$output_dir/results/clade"
 	mkdir -p $output
 	clade=$(head -n1 ${HOME}/VaricellaGen/databases/new_scheme.txt | cut -d',' -f2- | sed 's/,/\n/g' | grep -wf - $output_dir/results/variants/${id}_zoster_decompose.vcf  | cut -f2,4,5  | sed 's/<\*>/ref/' | awk '{print $2$1$3}' | sed -z 's/\n/,/g; s/,$/\n/' | grep -f - ${HOME}/VaricellaGen/databases/new_scheme.txt | cut -f1 -d"," | sed 's/.*/Clade &/')
-	echo "$id,$clade" > $output/clade.csv
+	echo "id,clade" > $output/clade.csv
+	echo "$id,$clade" >> $output/clade.csv
 }
 
 run_typing_p
