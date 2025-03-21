@@ -73,12 +73,31 @@ For further explanation please visit: https://github.com/MicroBioGenoHub/Varicel
 
 ```
 
+## How ro Run
 
-# Output Files
+If you want to perform variant calling, consensus genome generation, and clade typing, run the command below
+
+```
+VaricellaGen -o <output_dir> -f <forward read path> -r <reverse read path> --typing true
+```
+
+If you want to perform variant calling and consensus genome generation only, run the command below
+
+```
+VaricellaGen -o <output_dir> -f <forward read path> -r <reverse read path> --varcall true
+```
+
+If you have a multi fasta file and you want to perform phylogenetics, run the command below
+
+```
+VaricellaGen -o <output_dir> --consensus <path to multi fasta file> --phylogeny true
+```
+
+## Output Files
 
 Here we describe the output files generated from the analysis pipeline. The outputs are organized into different directories based on their function.
 
-## Directory Structure
+### Directory Structure
 
 | Directory      | File(s)               | Description |
 |--------------|----------------------|-------------|
