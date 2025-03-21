@@ -74,4 +74,24 @@ For further explanation please visit: https://github.com/MicroBioGenoHub/Varicel
 ```
 
 
+# Output Files
+
+Here we describe the output files generated from the analysis pipeline. The outputs are organized into different directories based on their function.
+
+## Directory Structure
+
+| Directory      | File(s)               | Description |
+|--------------|----------------------|-------------|
+| **alignment/**  | BAM File | Contains the aligned sequencing reads, used for downstream variant calling and consensus genome generation. |
+| **clade/**  | clade.csv | CSV file with a header row, followed by sequence IDs and their corresponding clades, used for phylogenetic classification. |
+| **consensus/**  | Consensus FASTA File | Contains the final consensus genome sequence. |
+|              | Metrics File | Reports genome coverage and N-content statistics. |
+| **qc/**  | HTML Files | Contain quality control (QC) reports. |
+|              | trimmed_fastq/ | A subdirectory containing trimmed FASTQ files after quality filtering and adapter removal. |
+| **variants/**  | GVCF File | Stores variant calls in genomic variant call format (gVCF). |
+|              | Decomposed VCF File | A normalized version of the variant call file. |
+|              | Fixed & Ambiguous VCF Files | Processed VCF files having fixed and ambiguous variants. |
+|              | mask.txt | A text file listing masked regions in the consensus genome. |
+| **phylogeny/**  | msa | A subdirectory containing an MSA file |
+|                 | tree | A subdirectory containing the nexus tree |
 
