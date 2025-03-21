@@ -172,6 +172,7 @@ run_alignment_p() {
 	samtools view -F4 $output_dir/results/alignment/${id}.zoster.sorted.bam -o $output_dir/results/alignment/${id}.zoster.sorted.mapped.bam
         samtools sort -o $output_dir/results/alignment/${id}.zoster.sorted.mapped.sorted.bam $output_dir/results/alignment/${id}.zoster.sorted.mapped.bam
 	samtools index $output_dir/results/alignment/${id}.zoster.sorted.mapped.sorted.bam
+	rm $output_dir/results/alignment/${id}.zoster.sorted.bam
 }
 
 #run_alignment_p ## the function works well
