@@ -239,7 +239,7 @@ run_tree_p() {
 
 if [ "$typing" = true ]
 then
-	conda activate VarcellaGen
+	conda activate VaricellaGen
 	exist_p
 	run_fastqc_p	
 	run_alignment_p
@@ -247,13 +247,13 @@ then
 	run_typing_p
 elif [ "$varcall" = true ]
 then
-	conda activate VarcellaGen
+	conda activate VaricellaGen
 	exist_p
 	run_fastqc_p
 	run_alignment_p
 	run_var_p
 elif [ "$phylogeny" = true ]
 then
-	conda activate VarcellaGen
+	conda activate VaricellaGen
 	run_tree_p
 fi
