@@ -234,6 +234,11 @@ run_tree_p() {
 	mkdir -p "$output_dir/results/phylogeny/tree"
 	mafft --thread $cores $input > $output/msa/${id}.aln.fa
 	iqtree2 -s $output/msa/${id}.aln.fa -T 8 -m TEST -czb -B 1000 --quiet
+	mv  $output/msa/*  $output/tree/
+	mv  $output/tree/*fa  $output/msa/
+	mv  $output/tree/*treefile  $output/msa/
+	rm  $output/tree/*
+	mv  $output/msa/*treefile  $output/tree/
 }
 
 
