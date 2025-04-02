@@ -187,19 +187,19 @@ run_var_p() {
 	freebayes -p 1 -f ${HOME}/VaricellaGen/references/zoster.fasta -F 0.2 -C 1 --pooled-continuous --min-coverage 10 --gvcf --gvcf-dont-use-chunk true $input > $output/${id}_zoster.gvcf
 	vt decompose_blocksub $output/${id}_zoster.gvcf -o $output/${id}_zoster_decompose.vcf
 #	conda activate pysam
-	process_gvcf.py -d 10 -l 0.25 -u 0.75 -m $output/${id}_zoster.mask.txt -v $output/${id}_zoster.variants.vcf -c $output/${id}_zoster.consensus.vcf $output/${id}_zoster.gvcf
+	process_gvcf.py -d 10 -l 0.25 -u 0.75 -m $output/${id}_zoster.mask.txt -v $output/${id}_zoster.variants.vcf -c $output/${id}_zoster.consensus.vcf $output/${id}_zoster.gvcf	
 #	conda activate sarscov
-	bcftools norm -D -d all -f ${HOME}/VaricellaGen/references/zoster.fasta $output/${id}_zoster.variants.vcf > $output/${id}_zoster.variants.norm.vcf
-	bcftools norm -D -d all -f ${HOME}/VaricellaGen/references/zoster.fasta $output/${id}_zoster.consensus.vcf > $output/${id}_zoster.consensus.norm.vcf
+	bcftools norm  -D -d all -f ${HOME}/VaricellaGen/references/zoster.fasta $output/${id}_zoster.variants.vcf > $output/${id}_zoster.variants.norm.vcf
+	bcftools norm  -D -d all -f ${HOME}/VaricellaGen/references/zoster.fasta $output/${id}_zoster.consensus.vcf > $output/${id}_zoster.consensus.norm.vcf
 	cat $output/${id}_zoster.consensus.norm.vcf | awk -v vartag=ConsensusTag=ambiguous '$0 ~ /^#/ || $0 ~ vartag' > $output/${id}_zoster.ambiguous.norm.vcf
 	bgzip -f $output/${id}_zoster.ambiguous.norm.vcf
 	tabix -f -p vcf $output/${id}_zoster.ambiguous.norm.vcf.gz
 	cat $output/${id}_zoster.consensus.norm.vcf | awk -v vartag=ConsensusTag=fixed '$0 ~ /^#/ || $0 ~ vartag' > $output/${id}_zoster.fixed.norm.vcf
 	bgzip -f $output/${id}_zoster.fixed.norm.vcf
 	tabix -f -p vcf $output/${id}_zoster.fixed.norm.vcf.gz
-	bcftools consensus -f ${HOME}/VaricellaGen/references/zoster.fasta -I $output/${id}_zoster.ambiguous.norm.vcf.gz > $output/${id}_zoster.ambiguous.fa
+	bcftools consensus -f ${HOME}/VaricellaGen/references/zoster.fasta -s - -I $output/${id}_zoster.ambiguous.norm.vcf.gz > $output/${id}_zoster.ambiguous.fa
 	CTG_NAME=$(head -n1 ${HOME}/VaricellaGen/references/zoster.fasta | sed 's/>//')
-	bcftools consensus -f $output/${id}_zoster.ambiguous.fa -m $output/${id}_zoster.mask.txt $output/${id}_zoster.fixed.norm.vcf.gz | sed "s/$CTG_NAME/$id/" > $output/${id}_zoster.consensus.fa
+	bcftools consensus -f $output/${id}_zoster.ambiguous.fa -s - -m $output/${id}_zoster.mask.txt $output/${id}_zoster.fixed.norm.vcf.gz | sed "s/$CTG_NAME/$id/" > $output/${id}_zoster.consensus.fa
 	mkdir -p $output_dir/results/consensus
 	mv $output/*consensus*fa $output_dir/results/consensus
 	#calculate genome coverage and n content
@@ -233,7 +233,7 @@ run_tree_p() {
 	mkdir -p "$output_dir/results/phylogeny/msa"
 	mkdir -p "$output_dir/results/phylogeny/tree"
 	mafft --thread $cores $input > $output/msa/${id}.aln.fa
-	iqtree2 -s $output/msa/${id}.aln.fa -T 8 -m TEST -czb -B 1000 --quiet
+	iqtree2 -s $output/msa/${id}.aln.fa -T 8 -m TEST --quiet
 	mv  $output/msa/*  $output/tree/
 	mv  $output/tree/*fa  $output/msa/
 	mv  $output/tree/*treefile  $output/msa/
